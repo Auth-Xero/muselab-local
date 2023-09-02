@@ -1,11 +1,11 @@
 package com.authxero.muselablocal.payload.response;
 
-public class CreateRoomResponse {
+public class RoomResponse {
     private long roomId;
     private String roomName;
     private boolean locked;
 
-    public CreateRoomResponse(long roomId, String roomName, boolean locked){
+    public RoomResponse(long roomId, String roomName, boolean locked){
         this.roomId = roomId;
         this.roomName = roomName;
         this.locked = locked;
