@@ -7,22 +7,21 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonFormat(shape = JsonFormat.Shape.ARRAY)
 public class RoomListResponse {
-    private List<RoomResponse> array;
+    private List<RoomResponse> data;
 
     public RoomListResponse(List<Room> rooms) {
-        array = new ArrayList<>();
+        data = new ArrayList<>();
         for (Room r : rooms) {
-            array.add(new RoomResponse(r.getRoomId(), r.getRoomName(), r.isLocked()));
+            data.add(new RoomResponse(r.getRoomId(), r.getRoomName(), r.isLocked()));
         }
     }
 
-    public List<RoomResponse> getArray() {
-        return array;
+    public List<RoomResponse> getData() {
+        return data;
     }
 
-    public void setArray(List<RoomResponse> array) {
-        this.array = array;
+    public void setData(List<RoomResponse> data) {
+        this.data = data;
     }
 }

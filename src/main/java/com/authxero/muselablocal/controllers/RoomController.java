@@ -54,10 +54,9 @@ public class RoomController {
             if (r.isLocked() && joinRoomRequest.getRoomPassword() != null)
                 rs = RoomHelper.loginToRoom(u, joinRoomRequest.getRoomId(), joinRoomRequest.getRoomPassword());
             else rs = RoomHelper.loginToRoom(u, joinRoomRequest.getRoomId());
-            return ResponseEntity.ok(new RoomSessionResponse(r.getRoomId(),r.getRoomName(),rs.getSessionToken()));
+            return ResponseEntity.ok(new RoomSessionResponse(r.getRoomId(), r.getRoomName(), rs.getSessionToken()));
         } catch (Exception exception) {
             return ResponseEntity.status(401).body(new MessageResponse(exception.getMessage()));
         }
-
     }
 }

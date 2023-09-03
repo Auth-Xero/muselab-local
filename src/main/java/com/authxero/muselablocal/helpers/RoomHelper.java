@@ -27,8 +27,8 @@ public class RoomHelper {
                 String roomData = FileHelper.readFile(f + "/room.json");
                 Room r = JsonHelper.fromJson(roomData, Room.class);
                 ROOM_LIST.add(r);
+            } catch (Exception ignored) {
             }
-            catch (Exception ignored){}
         }
         System.out.println(ROOM_LIST.size());
     }
@@ -78,18 +78,21 @@ public class RoomHelper {
 
     public static RoomSession loginToRoom(User u, long id, String password) throws Exception {
         Room r = getRoomById(id);
-        if(r == null) throw new Exception("Room not found!");
-        if(!BCrypt.checkpw(password, r.getRoomPassword())) throw new Exception("The password to room "+r.getRoomName()+" was incorrect!");
-        RoomSession rs = new RoomSession(u,r);
-        ROOM_MAP.put(rs.getSessionToken(),rs);
+        if (r == null) throw new Exception("Room not found!");
+        if (r.isLocked())
+            if (!BCrypt.checkpw(password, r.getRoomPassword()))
+                throw new Exception("The password to room " + r.getRoomName() + " was incorrect!");
+        RoomSession rs = new RoomSession(u, r);
+        ROOM_MAP.put(rs.getSessionToken(), rs);
         return rs;
     }
 
     public static RoomSession loginToRoom(User u, long id) throws Exception {
         Room r = getRoomById(id);
-        if(r == null) throw new Exception("Room not found!");
-        RoomSession rs = new RoomSession(u,r);
-        ROOM_MAP.put(rs.getSessionToken(),rs);
+        if (r == null) throw new Exception("Room not found!");
+        if (r.isLocked()) throw new Exception("The room you are trying to access is locked!");
+        RoomSession rs = new RoomSession(u, r);
+        ROOM_MAP.put(rs.getSessionToken(), rs);
         return rs;
     }
 
