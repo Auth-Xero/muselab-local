@@ -7,19 +7,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SessionHelper {
     private final static ConcurrentHashMap<String, User> SESSIONS = new ConcurrentHashMap<>();
 
-    public static void addUser(String s,User u){
-        SESSIONS.put(s,u);
+    public static void addUser(String s, User u) {
+        SESSIONS.put(s, u);
     }
 
-    public static User getUserBySession(String s){
+    public static User getUserBySession(String s) {
         return SESSIONS.get(s);
     }
 
-    public static User getUserByUsername(String u){
+    public static User getUserByUsername(String u) {
         return SESSIONS.values().stream().filter(user -> u.equals(user.getUsername())).findFirst().orElse(null);
     }
 
-    public static User getUserById(long id){
+    public static User getUserById(long id) {
         return SESSIONS.values().stream().filter(user -> id == user.getId()).findFirst().orElse(null);
     }
 
@@ -35,7 +35,15 @@ public class SessionHelper {
         return SESSIONS.containsKey(session);
     }
 
-    public static void removeBySession(String session){
+    public static void removeBySession(String session) {
         SESSIONS.remove(session);
+    }
+
+    public static User createUser(String username) {
+        String token = RandomHelper.generateRandomString(32);
+        User u = new User(username);
+        u.setToken(token);
+        addUser(token, u);
+        return u;
     }
 }
