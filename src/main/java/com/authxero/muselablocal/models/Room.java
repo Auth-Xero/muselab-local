@@ -1,7 +1,6 @@
 package com.authxero.muselablocal.models;
 
 
-import com.authxero.muselablocal.helpers.JsonHelper;
 import com.authxero.muselablocal.helpers.RandomHelper;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,12 +27,12 @@ public class Room {
         this.roomId = RandomHelper.generateRandomLong(0, 1000000000);
         this.roomPassword = roomPassword;
     }
+
     @JsonCreator
     public Room(@JsonProperty("roomId") long roomId, @JsonProperty("roomName") String roomName, @JsonProperty("locked") boolean locked, @JsonProperty("roomPassword") String roomPassword) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.locked = locked;
-        this.roomId = RandomHelper.generateRandomLong(0, 1000000000);
         this.roomPassword = roomPassword;
     }
 
@@ -48,6 +47,10 @@ public class Room {
 
     public long getRoomId() {
         return roomId;
+    }
+
+    public void addParticipant(User u){
+        this.participants.add(u);
     }
 
     public void setParticipants(List<User> participants) {

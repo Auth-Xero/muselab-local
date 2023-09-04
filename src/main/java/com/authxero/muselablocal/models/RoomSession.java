@@ -6,11 +6,13 @@ public class RoomSession {
     private long userId;
     private long roomId;
     private String sessionToken;
+    private boolean inRoom;
 
     public RoomSession(long userId, long roomId){
         this.userId = userId;
         this.roomId = roomId;
         this.sessionToken = RandomHelper.generateRandomString(32);
+        this.inRoom = false;
     }
 
     public long getUserId() {
@@ -35,5 +37,13 @@ public class RoomSession {
 
     public void setSessionToken(String sessionToken) {
         this.sessionToken = sessionToken;
+    }
+
+    public boolean isInRoom() {
+        return inRoom;
+    }
+
+    public void setInRoom(boolean inRoom) {
+        this.inRoom = inRoom;
     }
 }

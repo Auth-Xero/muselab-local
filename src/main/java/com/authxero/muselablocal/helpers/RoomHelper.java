@@ -9,9 +9,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.IntStream;
 
 @Component
 public class RoomHelper {
@@ -57,6 +56,14 @@ public class RoomHelper {
 
     public static Room getRoomById(long id) {
         return ROOM_LIST.stream().filter(room -> id == room.getRoomId()).findFirst().orElse(null);
+    }
+
+    public static void updateRoomById(long id, Room r) {
+        int index = IntStream.range(0, ROOM_LIST.size())
+                .filter(i -> ROOM_LIST.get(i).getRoomId() == id)
+                .findFirst()
+                .orElse(-1);
+        ROOM_LIST.set(index, r);
     }
 
     public static boolean existsById(long id) {

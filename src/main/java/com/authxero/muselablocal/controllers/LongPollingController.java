@@ -1,7 +1,10 @@
 package com.authxero.muselablocal.controllers;
 
 import com.authxero.muselablocal.helpers.LongPollingHelper;
+import com.authxero.muselablocal.helpers.RoomHelper;
+import com.authxero.muselablocal.helpers.SessionHelper;
 import com.authxero.muselablocal.models.EMessage;
+import com.authxero.muselablocal.models.Room;
 import com.authxero.muselablocal.models.RoomSession;
 import com.authxero.muselablocal.payload.response.PollingResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,10 +28,17 @@ public class LongPollingController {
         try {
             switch (MESSAGE_TYPES[type]) {
                 case LOGIN -> {
-                    if (LongPollingHelper.authenticated(request))
+                    if (!LongPollingHelper.authenticated(request)) {
                         deferredResult.setResult(ResponseEntity.ok().body(new PollingResponse(EMessage.CLOSE.getValue(), null)));
-                    else{
-                        
+                        return deferredResult;
+                    } else {
+                        rs = LongPollingHelper.authenticate(request);
+                        if(rs.isInRoom()){
+                            deferredResult.setResult(ResponseEntity.ok().body(new PollingResponse(EMessage.CLOSE.getValue(), null)));
+                            return deferredResult;
+                        }
+                        Room r = RoomHelper.getRoomById(rs.getRoomId());
+                        r.addParticipant(SessionHelper.getUserById(rs.getUserId()));
                     }
                 }
 
