@@ -3,30 +3,30 @@ package com.authxero.muselablocal.models;
 import com.authxero.muselablocal.helpers.RandomHelper;
 
 public class RoomSession {
-    private User user;
-    private Room room;
+    private long userId;
+    private long roomId;
     private String sessionToken;
 
-    public RoomSession(User user, Room room){
-        this.user = user;
-        this.room = room;
+    public RoomSession(long userId, long roomId){
+        this.userId = userId;
+        this.roomId = roomId;
         this.sessionToken = RandomHelper.generateRandomString(32);
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return this.userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public Room getRoom() {
-        return room;
+    public long getRoomId() {
+        return roomId;
     }
 
-    public void setRoom(Room room) {
-        this.room = room;
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
     }
 
     public String getSessionToken() {

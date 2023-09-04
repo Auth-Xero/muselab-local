@@ -17,8 +17,6 @@ import java.util.Map;
 public class RoomHelper {
     private final static List<Room> ROOM_LIST = new ArrayList<>();
 
-    private final static Map<String, RoomSession> ROOM_MAP = new HashMap<>();
-
     @Autowired
     public RoomHelper() throws IOException {
         List<String> folders = FileHelper.listFoldersInDataFolder();
@@ -82,8 +80,8 @@ public class RoomHelper {
         if (r.isLocked())
             if (!BCrypt.checkpw(password, r.getRoomPassword()))
                 throw new Exception("The password to room " + r.getRoomName() + " was incorrect!");
-        RoomSession rs = new RoomSession(u, r);
-        ROOM_MAP.put(rs.getSessionToken(), rs);
+        RoomSession rs = new RoomSession(u.getId(), r.getRoomId());
+        LongPollingHelper.addSession(rs.getSessionToken(), rs);
         return rs;
     }
 
@@ -91,8 +89,8 @@ public class RoomHelper {
         Room r = getRoomById(id);
         if (r == null) throw new Exception("Room not found!");
         if (r.isLocked()) throw new Exception("The room you are trying to access is locked!");
-        RoomSession rs = new RoomSession(u, r);
-        ROOM_MAP.put(rs.getSessionToken(), rs);
+        RoomSession rs = new RoomSession(u.getId(), r.getRoomId());
+        LongPollingHelper.addSession(rs.getSessionToken(), rs);
         return rs;
     }
 
