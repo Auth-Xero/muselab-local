@@ -11,9 +11,9 @@ public class User {
     private long id;
     private String username;
     private String token;
-
-    private final ConcurrentLinkedQueue<ResponseEntity<String>> resultQueues = new ConcurrentLinkedQueue<>();
-    private DeferredResult<ResponseEntity<String>> deferredResult;
+    private Long lastUpdate;
+    private final ConcurrentLinkedQueue<ResponseEntity<?>> resultQueues = new ConcurrentLinkedQueue<>();
+    private DeferredResult<ResponseEntity<?>> deferredResult;
 
     public User(String username) {
         this.username = username;
@@ -48,15 +48,27 @@ public class User {
         return resultQueues.peek() != null;
     }
 
-    public ResponseEntity<String> nextMessage() {
+    public ResponseEntity<?> nextMessage() {
         return resultQueues.poll();
     }
 
-    public DeferredResult<ResponseEntity<String>> getDeferredResult() {
+    public DeferredResult<ResponseEntity<?>> getDeferredResult() {
         return deferredResult;
     }
 
-    public void setDeferredResult(DeferredResult<ResponseEntity<String>> deferredResult) {
+    public Long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate() {
+        this.lastUpdate = System.currentTimeMillis();
+    }
+
+    public void setDeferredResult(DeferredResult<ResponseEntity<?>> deferredResult) {
         this.deferredResult = deferredResult;
+    }
+
+    public void enqueueMessage(ResponseEntity<?> msg) {
+        resultQueues.add(msg);
     }
 }

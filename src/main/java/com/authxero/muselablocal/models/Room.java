@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
@@ -15,10 +16,13 @@ public class Room {
 
     private boolean locked;
 
+    private Long lastUpdate;
+
     public Room(String roomName) {
         this.roomName = roomName;
         this.locked = false;
         this.roomId = RandomHelper.generateRandomLong(0, 1000000000);
+        this.participants = new ArrayList<>();
     }
 
     public Room(String roomName, String roomPassword) {
@@ -26,6 +30,7 @@ public class Room {
         this.locked = true;
         this.roomId = RandomHelper.generateRandomLong(0, 1000000000);
         this.roomPassword = roomPassword;
+        this.participants = new ArrayList<>();
     }
 
     @JsonCreator
@@ -34,6 +39,7 @@ public class Room {
         this.roomName = roomName;
         this.locked = locked;
         this.roomPassword = roomPassword;
+        this.participants = new ArrayList<>();
     }
 
     @JsonIgnore
@@ -83,5 +89,13 @@ public class Room {
 
     public void setRoomName(String roomName) {
         this.roomName = roomName;
+    }
+
+    public void setUpdated() {
+        lastUpdate = System.currentTimeMillis();
+    }
+
+    public Long getLastUpdate() {
+        return lastUpdate;
     }
 }

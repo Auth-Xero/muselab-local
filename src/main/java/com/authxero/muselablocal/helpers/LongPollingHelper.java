@@ -5,10 +5,12 @@ import com.authxero.muselablocal.models.User;
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.IntStream;
 
 public class LongPollingHelper {
     private final static ConcurrentHashMap<String, RoomSession> SESSIONS = new ConcurrentHashMap<>();
     public static final long TIMEOUT_MS = 45000;
+
     public static boolean authenticated(HttpServletRequest req) {
         String token = req.getHeader("sessionToken");
         if (token == null) return false;

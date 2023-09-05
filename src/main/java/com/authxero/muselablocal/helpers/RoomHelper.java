@@ -66,6 +66,20 @@ public class RoomHelper {
         ROOM_LIST.set(index, r);
     }
 
+    public static void updateUserById(long id, User u, long roomId) {
+        Room r = getRoomById(roomId);
+        int index = IntStream.range(0, r.getParticipants().size())
+                .filter(i -> r.getParticipants().get(i).getId() == id)
+                .findFirst()
+                .orElse(-1);
+        r.getParticipants().set(index, u);
+        int index1 = IntStream.range(0, ROOM_LIST.size())
+                .filter(i -> ROOM_LIST.get(i).getRoomId() == r.getRoomId())
+                .findFirst()
+                .orElse(-1);
+        ROOM_LIST.set(index1, r);
+    }
+
     public static boolean existsById(long id) {
         return ROOM_LIST.stream().anyMatch(room -> id == room.getRoomId());
     }
