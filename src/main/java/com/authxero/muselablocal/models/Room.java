@@ -59,6 +59,10 @@ public class Room {
         this.participants.add(u);
     }
 
+    public void removeParticipant(User u){
+        this.participants.remove(u);
+    }
+
     public void setParticipants(List<User> participants) {
         this.participants = participants;
     }
@@ -98,4 +102,5 @@ public class Room {
     public Long getLastUpdate() {
         return lastUpdate;
     }
+
 }

@@ -42,7 +42,7 @@ public class LongPollingController {
                             return deferredResult;
                         }
                         Room r = RoomHelper.getRoomById(rs.getRoomId());
-                        System.out.println(r.getParticipants().size());
+                        //System.out.println(r.getParticipants().size());
                         User user = SessionHelper.getUserById(rs.getUserId());
                         r.addParticipant(user);
                         ArrayNode userList = JsonHelper.OBJECT_MAPPER.createArrayNode();
@@ -56,7 +56,7 @@ public class LongPollingController {
                         notifyMessage.put("message", user.getUsername() + " has joined room " + r.getRoomName());
                         notifyMessage.put("user", user.getId());
                         notifyMessage.set("userList", userList);
-                        System.out.println(r.getParticipants().size());
+                        //System.out.println(r.getParticipants().size());
                         for (User u : r.getParticipants()) {
                             try {
                                 DeferredResult<ResponseEntity<?>> dr = u.getDeferredResult();
@@ -76,6 +76,16 @@ public class LongPollingController {
                         rs.setInRoom(true);
                         LongPollingHelper.addSession(rs.getSessionToken(), rs);
                         RoomHelper.updateRoomById(r.getRoomId(), r);
+                    }
+                    return deferredResult;
+                }
+                case CLOSE -> {
+                    if (!LongPollingHelper.authenticated(request)) {
+                        deferredResult.setResult(ResponseEntity.ok().body(new PollingResponse(EMessage.CLOSE.getValue(), null)));
+                        return deferredResult;
+                    } else {
+                        deferredResult.setResult(ResponseEntity.ok().body(new PollingResponse(EMessage.CLOSE.getValue(), null)));
+                        handleClose(request);
                     }
                     return deferredResult;
                 }
@@ -112,5 +122,40 @@ public class LongPollingController {
         return deferredResult;
     }
 
+    private void handleClose(HttpServletRequest request) {
+        RoomSession rs = LongPollingHelper.authenticate(request);
+        Room r = RoomHelper.getRoomById(rs.getRoomId());
+        //System.out.println(r.getParticipants().size());
+        User user = SessionHelper.getUserById(rs.getUserId());
+        r.removeParticipant(user);
+        ArrayNode userList = JsonHelper.OBJECT_MAPPER.createArrayNode();
+        for (User pu : r.getParticipants()) {
+            ObjectNode userObj = JsonHelper.OBJECT_MAPPER.createObjectNode();
+            userObj.put("username", pu.getUsername());
+            userObj.put("id", pu.getId());
+            userList.add(userObj);
+        }
+        ObjectNode notifyMessage = JsonHelper.OBJECT_MAPPER.createObjectNode();
+        notifyMessage.put("message", user.getUsername() + " has left");
+        ObjectNode notifyLeave = JsonHelper.OBJECT_MAPPER.createObjectNode();
+        notifyLeave.put("type", EMessage.LEAVE.getValue());
+        notifyLeave.set("data", notifyMessage);
+        notifyLeave.set("users", userList);
+        for (User u : r.getParticipants()) {
+            try {
+                DeferredResult<ResponseEntity<?>> dr = u.getDeferredResult();
+                u.enqueueMessage(ResponseEntity.ok().body(new PollingResponse(EMessage.LEAVE.getValue(), notifyMessage)));
+                if (dr != null) {
+                    dr.setResult(u.nextMessage());
+                    u.setDeferredResult(null);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        rs.setInRoom(false);
+        LongPollingHelper.addSession(rs.getSessionToken(), rs);
+        RoomHelper.updateRoomById(r.getRoomId(), r);
+    }
 
 }
