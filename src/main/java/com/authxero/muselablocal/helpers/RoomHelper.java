@@ -18,16 +18,18 @@ public class RoomHelper {
 
     @Autowired
     public RoomHelper() throws IOException {
+        boolean roomsFound = false;
         List<String> folders = FileHelper.listFoldersInDataFolder();
         for (String f : folders) {
+            if(roomsFound) break;
             try {
                 String roomData = FileHelper.readFile(f + "/room.json");
                 Room r = JsonHelper.fromJson(roomData, Room.class);
                 ROOM_LIST.add(r);
+                roomsFound = true;
             } catch (Exception ignored) {
             }
         }
-        System.out.println(ROOM_LIST.size());
     }
 
     public static Room createRoom(String name, String password) {

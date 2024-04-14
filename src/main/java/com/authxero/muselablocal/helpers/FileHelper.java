@@ -38,6 +38,7 @@ public class FileHelper {
 
     public static List<String> listFoldersInDataFolder() throws IOException {
         Path path = Paths.get(DATA_FOLDER);
+        if(!Files.exists(path)) Files.createDirectories(path);
         try (Stream<Path> walk = Files.walk(path)) {
             return walk
                     .filter(Files::isDirectory)
